@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Geolocation</title>
+
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/4.1.2/firebase.js"></script>
+   <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+   <script src ="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGNiJ9JLW2PcC5C4Ku1X5vfJ3Omzdaddw&libraries=places"></script>
+    <script src="/static/Firebase.js">
+      console.log(config);  
+    </script>  
+    <!-- <script src="/static/gmaps.js"></script> -->
+    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGNiJ9JLW2PcC5C4Ku1X5vfJ3Omzdaddw&callback=initMap&libraries=places"></script> -->
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 100%
+        
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+
+    
+    <script>
+    $.getScript("/static/Firebase.js");
+    var config = window.parent.config;
+    var config = {
+      apiKey: "AIzaSyC9vpBfsZbCtsIMvvimJy1n3FMfmc90N4s",
+      authDomain: "rpoint-22019.firebaseapp.com",
+      databaseURL: "https://rpoint-22019.firebaseio.com",
+      projectId: "rpoint-22019",
+      storageBucket: "rpoint-22019.appspot.com",
+      messagingSenderId: "425524786368"
+    };
+    firebase.initializeApp(config);
+    
+    console.log("rpoint");
+  console.log(config);
+  var database=firebase.database();
+  var storage = firebase.storage();
+  var auth = firebase.auth();
+      // Note: This example requires that you consent to location sharing when
+      // prompted by your browser. If you see the error "The Geolocation service
+      // failed.", it means you probably did not give permission for the browser to
+      // locate you.
+      var database = firebase.database();
+      var parameters = window.location.pathname.split("/");
+      var id = parameters[parameters.length-1];
+
+
+      console.log(id);
+      var longitude;
+      var longitude, latitude;
+      database.ref("Tests/"+id+"/longitude").on('value', function(snapshot) {
+        var longitude = snapshot.val();
+      });
+      database.ref("Tests/"+id).once('value').then(function(snapshot) {
+        latitude = snapshot.val().latitude;
+        longitude = snapshot.val().longitude;
+        console.log(longitude);
+        console.log(latitude);
+        console.log("Success");
+        var map, infoWindow, infoWindow2, pos, directionsService, directionsDisplay;
+      
+      function initMap() {
+        map = new google.maps.Map(document.getElementById('map'), {
+          center: {lat: -34.397, lng: 150.644},
+          zoom: 16
+        });
+        infoWindow = new google.maps.InfoWindow;
+        infoWindow2 = new google.maps.InfoWindow;
+        directionsService = new google.maps.DirectionsService;
+        directionsDisplay = new google.maps.DirectionsRenderer;
+        directionsDisplay.setMap(map);
+          
+          pos = {
+              lat: Number(latitude),
+              lng: Number(longitude)
+            };
+        // Try HTML5 geolocation.
+        if (navigator.geolocation)
+        {
+          // set user's current position
+          navigator.geolocation.getCurrentPosition(function(position) 
+          {
+             
+            // put marker on user's position
+            var marker = new google.maps.Marker({
+              position: pos,
+              map: map,
+              title: 'My Location'
+            });
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+            infoWindow.setContent('Current Location');
+            infoWindow.setPosition(pos)
+            infoWindow.open(map,marker);
+            map.setCenter(pos);
+            if ( '{{ types[1] }}' != 'restaurant') {
+                var request = {
+                location: pos,
+                radius: 1000,
+                type: ['{{ types[0] }}']
+              }; 
+              }
+              else{
+                var request = {
+                location: pos,
+                radius: 1000,
+                type: ['{{ types[0] }}', '{{ types[1] }}']
+              };
+              }
+             
+              service = new google.maps.places.PlacesService(map);
+              service.nearbySearch(request, callback);
+            
+          }, function() {
+            var marker = new google.maps.Marker({
+              position: pos,
+              map: map,
+              title: 'My Location'
+            });
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+            infoWindow.setContent('Current Location');
+            infoWindow.setPosition(pos)
+            infoWindow.open(map,marker);
+            map.setCenter(pos);
+              // get all the restaurant 
+              var request = {
+                location: pos,
+                radius: 1000,
+                type: ['{{ types }}']
+              };
+              service = new google.maps.places.PlacesService(map);
+              service.nearbySearch(request, callback);
+            // handleLocationError(true, infoWindow, map.getCenter());
+          });
+        }
+        else {
+          // Browser doesn't support Geolocation
+          pos = {
+              lat: Number(latitude),
+              lng: Number(longitude)
+            };
+            var marker = new google.maps.Marker({
+              position: pos,
+              map: map,
+              title: 'My Location'
+            });
+            marker.setAnimation(google.maps.Animation.BOUNCE);
+            infoWindow.setContent('Current Location');
+            infoWindow.setPosition(pos)
+            infoWindow.open(map,marker);
+            map.setCenter(pos);
+              // get all the restaurant 
+              var request = {
+                location: pos,
+                radius: 1000,
+                type: ['{{ types }}']
+              };
+              service = new google.maps.places.PlacesService(map);
+              service.nearbySearch(request, callback);
+          //handleLocationError(false, infoWindow, map.getCenter());
+        }       
+      }
+    
+        function callback(results, status) {
+          
+          if (status == google.maps.places.PlacesServiceStatus.OK) {
+            for (var i = 0; i < results.length; i++) {
+                // var IsOpen = 'Open';
+                // // if(results[i].opening_hours.open_now){
+                // //   IsOpen = 'Open';
+                // // }
+                // // else{
+                // //   IsOpen = 'Closed'
+                // // }
+                // var contentString = '<h3>' + results[i].name + '</h3>' +
+                //                     '<p> Address: ' + results[i].formatted_address + '<br/>Contact: ' + results[i].formatted_phone_number + '<br/>' +
+                //                     'Status: ' + IsOpen + '<br/>' +
+                //                     'Rating: ' + results[i].rating + '/5';
+                                    
+                // infoWindow2 = new google.maps.InfoWindow({
+                //   content : contentString
+                // });
+                
+
+
+
+
+                // infoWindow2.setPosition(results[i].geometry.location);
+                var place = results[i];               
+                createMarker(results[i], results);
+               }
+              }
+            }
+        function createMarker(place, arr) {
+          var placeLoc = place.geometry.location;
+          var marker = new google.maps.Marker({
+            map: map,
+            position: place.geometry.location
+            // address:place.address
+          });
+
+          marker.addListener('click', function() {
+              infoWindow2.close()
+              markerDetails(marker, arr);
+          });     
+        }
+
+        
+
+        function markerDetails(marker, arr){
+          
+          var lat = marker.getPosition().lat();
+          var lng = marker.getPosition().lng();  
+
+
+          for (var i = 0; i < arr.length; i++){
+
+            if (arr[i].geometry.location.lat() == lat && arr[i].geometry.location.lng() == lng){
+              console.log(arr[i]);
+              console.log("Test");
+              console.log("Address: " +arr[i].formatted_address);
+                var contentString = '<h3>' + arr[i].name + '</h3>' +
+                                    '<p> Address: ' + arr[i].formatted_address + '<br/>Contact: ' + arr[i].formatted_phone_number + '<br/>' +
+                                    'Rating: ' + arr[i].rating + '/5' + '<br/><a id="go"></a>';
+                
+                infoWindow2 = new google.maps.InfoWindow({
+                  content : contentString
+                });
+              
+                infoWindow2.setPosition(arr[i].geometry.location);
+                infoWindow2.open(map,marker);
+
+
+                document.getElementById('go').addEventListener('click', WalkingDirections(lat,lng))
+              }
+          }
+        }
+
+
+        function WalkingDirections(lat,lng){
+            destination={
+              lat: lat,
+              lng: lng
+            };
+            directionsService.route({
+              origin: pos,
+              destination: destination,
+              travelMode: 'WALKING'
+            }, function(response, status) {
+          if (status === 'OK') {
+            directionsDisplay.setDirections(response);
+            } else {
+            window.alert('Directions request failed due to ' + status);
+            }
+          });
+        }
+
+
+
+      function handleLocationError(browserHasGeolocation, infoWindow, pos1) {
+        infoWindow.setPosition(pos1);
+        infoWindow.setContent(browserHasGeolocation ?
+                              'Error: The Geolocation service failed.' :
+                              'Error: Your browser doesn\'t support geolocation.');
+        infoWindow.open(map);
+      }
+      initMap();
+        // end of ref 
+        // $.getScript("https://maps.googleapis.com/maps/api/js?key=AIzaSyDGNiJ9JLW2PcC5C4Ku1X5vfJ3Omzdaddw&callback=initMap&libraries=places");
+      });
+
+      console.log(longitude);
+    </script>
+   <!--  <script
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGNiJ9JLW2PcC5C4Ku1X5vfJ3Omzdaddw&callback=initMap&libraries=places">
+    </script> -->
+
+  </body>
+</html>
