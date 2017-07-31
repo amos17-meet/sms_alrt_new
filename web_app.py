@@ -51,9 +51,17 @@ def googlemap(types, id):
 def DonePage(id):
 	return render_template("DonePage.html")
 
-@app.route("/sms")
-def sms_page():
-	return render_template("sms.html")
+#return 2 dict of phone numbers to send an sms
+@app.route("/send_sms_to")
+def send_sms_to_page():
+	return render_template("send_sms_to.html")
+
+#send sms to the phone numbers
+@app.route("/send_sms")
+def send_sms():
+	response_dict = response.get_json()
+	print(response_dict)	
+
 
 if __name__ == '__main__':
 	app.run()

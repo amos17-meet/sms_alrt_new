@@ -19,11 +19,11 @@ $.when(
 
   window.onload = function () {
     var path = window.location.pathname;
-    if(path=="/sms") {
+    if(path=="/send_sms_to") {
         chackAllActiveUsersAndSendSMS();
         //test_loop();
       }
-    }
+  }
 
 
   // run thrue all users. chack if they shuld stay active and send SMS if needed
@@ -65,7 +65,7 @@ $.when(
               console.log(TestData[key].status);
               if(isActive(endOfAlcoholEffect,now,TestData[key])){
                 console.log(TestData[key].status); 
-                sendText(TestData);
+                sendSecoundSms(TestData[key]);
               }
             }
           }
@@ -76,29 +76,7 @@ $.when(
     });
   }
 
-          /*
-          Test=snapshot.val();
-          if(Test.status=="active"){
-            var endOfAlcoholEffect=timeOfSober(Test);
-            console.log(endOfAlcoholEffect);
-            console.log(i);
-            console.log(Test.status);
-            if(isActive(endOfAlcoholEffect,now,Test)){
-              console.log(Test.status); 
-            }
-            isFinished=true;
-          }
-          else isFinished=true;
-        });
-
-        //if(isFinished){
-        //  i++;
-        //}
-      //}
-      */
-    
-  
-
+     
   function test_loop(){
     var Test=database.ref("Tests")
     Test.once('value').then(function(snapshot){
@@ -110,27 +88,10 @@ $.when(
         else console.log(key);
         
       });
-  });
-  }
-  
-/*
-      for(var i=0;i<Count;i=i+1){
-        console.log(i);
-        var Test=database.ref("Tests/"+i)
-        Test.once('value').then(function(snapshot){
-          Test=snapshot.val();
-          if(Test.status=="active"){
-            var endOfAlcoholEffect=timeOfSober(i);
-            console.log(i);
-            console.log(Test.status);
-            isActive(endOfAlcoholEffect,now);
-            console.log(Test.status);
-          }
-        });
-      }
     });
   }
-*/
+  
+
   //return the time when the user will be sober 
   function timeOfSober(Test){
     console.log("timeOfSoberFunction");
@@ -163,141 +124,124 @@ $.when(
     }
 
     //chack if the user shuld be active. if yes return true, else return false
-    function isActive(timeOfSober, currentTime, Test){
-      console.log("here");
-      console.log(timeOfSober);
-      console.log(typeof(timeOfSober));
-      console.log(typeof(currentTime));
-      var timeLeft=timeOfSober-currentTime;
-      console.log(timeOfSober+"-"+currentTime);
-      console.log(timeLeft);
-      if(timeLeft+15*60000<0){
-         console.log(Test);
-         changeToInactive(Test);
-         console.log("inactive");
-        return false;
-      }
+  function isActive(timeOfSober, currentTime, Test){
+    console.log("here");
+    console.log(timeOfSober);
+    console.log(typeof(timeOfSober));
+    console.log(typeof(currentTime));
+    var timeLeft=timeOfSober-currentTime;
+    console.log(timeOfSober+"-"+currentTime);
+    console.log(timeLeft);
+    if(timeLeft+15*60000<0){
+       console.log(Test);
+       changeToInactive(Test);
+       console.log("inactive");
+      return false;
+    }
+    return true;
+  }
+
+
+  function changeToInactive(Test) {
+    var sBirth=Test.Birth;
+    var sEstimatedTime=Test.estimatedTime;
+    var sGender=Test.gender;
+    var sId=Test.id;
+    var sLanguage=Test.language;
+    var sLatitude=Test.latitude;
+    var sLongitude=Test.longitude;
+    var sPhoneNumber=Test.phoneNumber;
+    var sResult=Test.result;
+    var sSms=Test.sms;
+    var sLanguAge=Test.language
+    var sTimeOfTest=Test.timeOfTest;
+    var sWeight=Test.weight;
+
+    firebase.database().ref('Tests/' + Test.id).set({
+      Birth: sBirth,
+      estimatedTime: sEstimatedTime,
+      gender: sGender,
+      id : sId,
+      language:sLanguage,
+      latitude: sLatitude,
+      longitude : sLongitude,
+      phoneNumber: sPhoneNumber,
+      result: sResult,
+      sms :sSms ,
+      status: "inactive",
+      timeOfTest: sTimeOfTest,
+      weight : sWeight
+    });
+  }
+
+  function updateSms(Test) {
+    var sBirth=Test.Birth;
+    var sEstimatedTime=Test.estimatedTime;
+    var sGender=Test.gender;
+    var sId=Test.id;
+    var sLatitude=Test.latitude;
+    var sLongitude=Test.longitude;
+    var sPhoneNumber=Test.phoneNumber;
+    var sResult=Test.result;
+    var sStatus=Test.status;
+    var sLanguage=Test.language
+    var sTimeOfTest=Test.timeOfTest;
+    var sWeight=Test.weight;
+
+    var sSms=Number(Test.sms);
+    sSms++;
+
+    firebase.database().ref('Tests/' + Test.id).set({
+      Birth: sBirth,
+      estimatedTime: sEstimatedTime,
+      gender: sGender,
+      id : sId,
+      language:sLanguage,
+      latitude: sLatitude,
+      longitude : sLongitude,
+      phoneNumber: sPhoneNumber,
+      result: sResult,
+      sms :sSms+"" ,
+      status: sStatus,
+      timeOfTest: sTimeOfTest,
+      weight : sWeight
+    });
+  }
+
+  function sendFirstSms(Test){
+    sendText("first sms", Test);
+   // updateSms(Test);
+  }
+  
+
+  function sendSecoundSms(timeOfSober, currentTime, Test){
+    var timeLeft=timeOfSober-currentTime;
+    if(timeLeft-5*60000<0){
+       sendText("secound sms",Test);
+       updateSms(Test)
       return true;
     }
+    return false;
+  }
 
-
-    function changeToInactive(Test) {
-      var sBirth=Test.Birth;
-      var sEstimatedTime=Test.estimatedTime;
-      var sGender=Test.gender;
-      var sId=Test.id;
-      var sLatitude=Test.latitude;
-      var sLongitude=Test.longitude;
-      var sPhoneNumber=Test.phoneNumber;
-      var sResult=Test.result;
-      var sSms=Test.sms;
-      var sLanguege=Test.languege
-      var sTimeOfTest=Test.timeOfTest;
-      var sWeight=Test.weight;
-
-      firebase.database().ref('Tests/' + Test.id).set({
-        Birth: sBirth,
-        estimatedTime: sEstimatedTime,
-        id : sId,
-        gender: sGender,
-        latitude: sLatitude,
-        longitude : sLongitude,
-        phoneNumber: sPhoneNumber,
-        result: sResult,
-        sms : sSms,
-        languege:sLanguege,
-        status: "inactive",
-        timeOfTest: sTimeOfTest,
-        weight : sWeight
-      });
-    }
-
-    function updateSms(Test) {
-      var sBirth=Test.Birth;
-      var sEstimatedTime=Test.estimatedTime;
-      var sGender=Test.gender;
-      var sId=Test.id;
-      var sLatitude=Test.latitude;
-      var sLongitude=Test.longitude;
-      var sPhoneNumber=Test.phoneNumber;
-      var sResult=Test.result;
-      var sStatus=Test.status;
-      var sLanguege=Test.languege
-      var sTimeOfTest=Test.timeOfTest;
-      var sWeight=Test.weight;
-
-      var sSms=Number(Test.sms);
-      sSms++;
-
-      firebase.database().ref('Tests/' + Test.id).set({
-        Birth: sBirth,
-        estimatedTime: sEstimatedTime,
-        id : sId,
-        gender: sGender,
-        latitude: sLatitude,
-        longitude : sLongitude,
-        phoneNumber: sPhoneNumber,
-        result: sResult,
-        sms :sSms+"" ,
-        languege:sLanguege,
-        status: sStatus,
-        timeOfTest: sTimeOfTest,
-        weight : sWeight
-      });
-    }
-
-    function sendFirstSms(Test){
-      sendText(Test,"first sms");
-      updateSms(Test);
-    }
-    
-
-    function sendSecoundSms(timeOfSober, currentTime, Test){
-      var timeLeft=timeOfSober-currentTime;
-      if(timeLeft-5*60000<0){
-         sendText("secound sms",Test);
-         updateSms(Test)
-        return true;
-      }
-      return false;
+  function sendText(text,Test){
+    console.log(text);
+  }
 
       
-    }
-
-    function sendText(text,Test){
-     console.log(test);
-    }
-
-      
-
-
-        //In for loop
-        /*
-        if(Test.status=="active")
-        {
-          console.log("HERE");
-          estimatedTime=Test.estimatedTime;
-          estimatedTime=estimatedTime.split(":");
-          estimatedTime=estimatedTime[0];
-          estimatedTime=parseInt(estimatedTime);
-          timeOfTest=Test.timeOfTest;
-          timeOfTest=parseInt(timeOfTest);
-
-          timeOfSober=estimatedTime+timeOfSober;
-          console.log(timeOfSober+"");
+});
+/*
+$.ajax({
+        type: 'POST',
+        url: "http://localhost:5000/send_sms",//<todo CHANGE BEFORE DEPLOYING
+        data: {'in':'out'}, //passing some input here
+        // dataType: "text",
+        success: function(response){
+           output = response;
+           alert(output);
         }
-        
-    }
-    */
-
-      
-      // Inside TestRef for the count
-    
-    //Inside SendSMS    
-
-      
-      // Inside done()
-    });
-
-//End of file, dont place any code here
-
+}).done(function(data){
+    console.log(data);
+    alert(data);
+});
+*/
