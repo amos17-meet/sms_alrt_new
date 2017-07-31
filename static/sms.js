@@ -21,6 +21,7 @@ $.when(
     var path = window.location.pathname;
     if(path=="/sms") {
         chackAllActiveUsersAndSendSMS();
+        //test_loop();
       }
     }
 
@@ -35,14 +36,47 @@ $.when(
       Count = TestData;
       Count=Number(Count);
       console.log(Count);
-
+      var i=0;
       var now =currentTime();
       console.log(typeof(now));
-      var i =0;
-      while(i<Count)
-      {
-        var Test=database.ref("Tests/"+i)
-        Test.once('value').then(function(snapshot){
+      var Test=database.ref("Tests")
+      Test.once('value').then(function(snapshot){
+        snapshot.forEach(function(childSnapshot) {
+      // key will be "ada" the first time and "alan" the second time
+          var key = childSnapshot.key;
+          console.log(key);
+          if(key=="Count"){
+            console.log("key is Count");
+          }
+        // childData will be the actual contents of the child
+          else {
+            console.log("key is "+key );
+            var TestData=snapshot.val();
+            console.log(TestData[key]);
+            console.log(TestData[key].status);
+            if(TestData[key].sms==0){
+              sendFirstSms(TestData);
+            }
+            if(TestData[key].status=="active"){
+              console.log("here");
+              var endOfAlcoholEffect=timeOfSober(TestData[key]);
+              console.log(endOfAlcoholEffect);
+              console.log(i);
+              console.log(TestData[key].status);
+              if(isActive(endOfAlcoholEffect,now,TestData[key])){
+                console.log(TestData[key].status); 
+                sendText(TestData);
+              }
+            }
+          }
+          console.log(i);
+          i++;
+        });
+      });
+    });
+  }
+
+          /*
           Test=snapshot.val();
           if(Test.status=="active"){
             var endOfAlcoholEffect=timeOfSober(Test);
@@ -51,13 +85,32 @@ $.when(
             console.log(Test.status);
             if(isActive(endOfAlcoholEffect,now,Test)){
               console.log(Test.status); 
-
             }
-            
+            isFinished=true;
           }
+          else isFinished=true;
         });
-      }
-    });
+
+        //if(isFinished){
+        //  i++;
+        //}
+      //}
+      */
+    
+  
+
+  function test_loop(){
+    var Test=database.ref("Tests")
+    Test.once('value').then(function(snapshot){
+      snapshot.forEach(function(childSnapshot) {
+        // key will be "ada" the first time and "alan" the second time
+        var key = childSnapshot.key;
+        if(key=="Count")console.log("test loop count");
+        // childData will be the actual contents of the child
+        else console.log(key);
+        
+      });
+  });
   }
   
 /*
@@ -118,7 +171,7 @@ $.when(
       var timeLeft=timeOfSober-currentTime;
       console.log(timeOfSober+"-"+currentTime);
       console.log(timeLeft);
-      if(timeLeft+15*60000){
+      if(timeLeft+15*60000<0){
          console.log(Test);
          changeToInactive(Test);
          console.log("inactive");
@@ -138,6 +191,7 @@ $.when(
       var sPhoneNumber=Test.phoneNumber;
       var sResult=Test.result;
       var sSms=Test.sms;
+      var sLanguege=Test.languege
       var sTimeOfTest=Test.timeOfTest;
       var sWeight=Test.weight;
 
@@ -151,11 +205,69 @@ $.when(
         phoneNumber: sPhoneNumber,
         result: sResult,
         sms : sSms,
+        languege:sLanguege,
         status: "inactive",
         timeOfTest: sTimeOfTest,
         weight : sWeight
       });
     }
+
+    function updateSms(Test) {
+      var sBirth=Test.Birth;
+      var sEstimatedTime=Test.estimatedTime;
+      var sGender=Test.gender;
+      var sId=Test.id;
+      var sLatitude=Test.latitude;
+      var sLongitude=Test.longitude;
+      var sPhoneNumber=Test.phoneNumber;
+      var sResult=Test.result;
+      var sStatus=Test.status;
+      var sLanguege=Test.languege
+      var sTimeOfTest=Test.timeOfTest;
+      var sWeight=Test.weight;
+
+      var sSms=Number(Test.sms);
+      sSms++;
+
+      firebase.database().ref('Tests/' + Test.id).set({
+        Birth: sBirth,
+        estimatedTime: sEstimatedTime,
+        id : sId,
+        gender: sGender,
+        latitude: sLatitude,
+        longitude : sLongitude,
+        phoneNumber: sPhoneNumber,
+        result: sResult,
+        sms :sSms+"" ,
+        languege:sLanguege,
+        status: sStatus,
+        timeOfTest: sTimeOfTest,
+        weight : sWeight
+      });
+    }
+
+    function sendFirstSms(Test){
+      sendText(Test,"first sms");
+      updateSms(Test);
+    }
+    
+
+    function sendSecoundSms(timeOfSober, currentTime, Test){
+      var timeLeft=timeOfSober-currentTime;
+      if(timeLeft-5*60000<0){
+         sendText("secound sms",Test);
+         updateSms(Test)
+        return true;
+      }
+      return false;
+
+      
+    }
+
+    function sendText(text,Test){
+     console.log(test);
+    }
+
       
 
 
