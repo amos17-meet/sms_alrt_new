@@ -5,6 +5,8 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 import pyrebase
 from passlib.hash import pbkdf2_sha256 as crypt
+from twilio.rest import Client
+
 
 
 UPLOAD_FOLDER = 'uploads'
@@ -60,11 +62,33 @@ def send_sms_to_page():
 @app.route("/send_sms", methods=["POST"])
 def send_sms():
 	req = request.form
-	data_list = str(req['param1'])
+	data_list = str(req['phoneNumberList'])
+	send_text(data_list)
+		
+	
 
+def send_text(string_list_of_phones):
 	print('request:')
-	print(data_list)	
-	return render_template('send_sms_to.html')
+	print(string_list_of_phones)
+	list_of_phones=list_of_phones[1:]
+	list_of_phones=list_of_phones[:-1]
+	list_of_phones=list_of_phones.split(",")
+
+def test_twilio():
+	# put your own credentials here
+	account_sid = "ACd5fdfa3be844be02e00316862ada2cb0"
+	auth_token = "4274acec9b0379ca63fc68b2a151899b"
+
+	client = Client(account_sid, auth_token)
+	
+	client.messages.create(
+    to="+972506372990",
+    from_="+972556669100",
+    body="This is the ship that made the Kessel Run in fourteen parsecs?",
+    media_url="https://c1.staticflickr.com/3/2899/14341091933_1e92e62d12_b.jpg")
+
+
+
 
 
 if __name__ == '__main__':

@@ -26,27 +26,64 @@ $.when(
   }
 
 
+  var send= function(phoneNumberList,URL){
+    $.ajax({
+      type: 'post',
+      url: URL, //TODO change for deployed version
+      data: {'phoneNumberList':JSON.stringify(phoneNumberList)},
+      // dataType: 
+      async: false,
+      success: function (response) {
+          console.log(response);
+      }
+    }).done(function (data) {
+        console.log(data);
+    });
+
+  }
+  //send({'firstPhoneNumber':"5"},"http://127.0.0.1:5000/send_sms");
+
   // run thrue all users. chack if they shuld stay active and send SMS if needed
   
   function chackAllActiveUsersAndSendSMS(){
+    var phoneNumbersListFirstSms=[];
+    var phoneNumbersListSecondSms=[];
     var TestRef = database.ref("Tests/Count");
     var Count;
+    var i=0;
+    var isCountHappend=false;
     TestRef.once('value').then(function(snapshot) {
       var TestData = snapshot.val();
       Count = TestData;
       Count=Number(Count);
       console.log(Count);
-      var i=0;
       var now =currentTime();
       console.log(typeof(now));
       var Test=database.ref("Tests")
       Test.once('value').then(function(snapshot){
+        //send first SMS to users who just used breathalyzer
+        //console.log();
+        //snapshot.filter(function(childSnapshot){
+          //TODO filter out child snapshots who have received a text
+
+        //   var key = childSnapshot.key;
+        //   console.log(key);
+        //   if(key=="Count"){
+        //     console.log("key is Count");
+        //   }
+        //   return true;
+        // }).map(function(childSnapshot){
+        //   //TODO get phone number and return it
+        // });
+        //feed above list into your send function
+
         snapshot.forEach(function(childSnapshot) {
       // key will be "ada" the first time and "alan" the second time
           var key = childSnapshot.key;
           console.log(key);
           if(key=="Count"){
             console.log("key is Count");
+            isCountHappend=true;
           }
         // childData will be the actual contents of the child
           else {
@@ -55,27 +92,35 @@ $.when(
             console.log(TestData[key]);
             console.log(TestData[key].status);
             if(TestData[key].sms==0){
-              sendFirstSms(TestData);
+              sendFirstSms(phoneNumbersListFirstSms,TestData[key]);
             }
             if(TestData[key].status=="active"){
               console.log("here");
               var endOfAlcoholEffect=timeOfSober(TestData[key]);
               console.log(endOfAlcoholEffect);
-              console.log(i);
               console.log(TestData[key].status);
               if(isActive(endOfAlcoholEffect,now,TestData[key])){
                 console.log(TestData[key].status); 
-                sendSecoundSms(TestData[key]);
+                sendSecoundSms(phoneNumbersListSecondSms,endOfAlcoholEffect,now,TestData[key]);
               }
             }
+            i++;
+            console.log("i is "+i);
+            
+            }
+            if(i==Count&&isCountHappend){
+              //send phone numbers list
+              console.log("finished");
+              send(phoneNumbersListFirstSms,"http://127.0.0.1:5000/send_sms")
           }
-          console.log(i);
-          i++;
+          
         });
+
+
       });
     });
   }
-
+  console.log('hope that forEAch is done')
      
   function test_loop(){
     var Test=database.ref("Tests")
@@ -143,7 +188,7 @@ $.when(
 
 
   function changeToInactive(Test) {
-    var sBirth=Test.Birth;
+    var sAge=Test.age;
     var sEstimatedTime=Test.estimatedTime;
     var sGender=Test.gender;
     var sId=Test.id;
@@ -158,7 +203,7 @@ $.when(
     var sWeight=Test.weight;
 
     firebase.database().ref('Tests/' + Test.id).set({
-      Birth: sBirth,
+      age: sAge,
       estimatedTime: sEstimatedTime,
       gender: sGender,
       id : sId,
@@ -175,7 +220,7 @@ $.when(
   }
 
   function updateSms(Test) {
-    var sBirth=Test.Birth;
+    var sAge=Test.age;
     var sEstimatedTime=Test.estimatedTime;
     var sGender=Test.gender;
     var sId=Test.id;
@@ -190,9 +235,10 @@ $.when(
 
     var sSms=Number(Test.sms);
     sSms++;
+    console.log("sms is "+ sSms);
 
     firebase.database().ref('Tests/' + Test.id).set({
-      Birth: sBirth,
+      age: sAge,
       estimatedTime: sEstimatedTime,
       gender: sGender,
       id : sId,
@@ -208,29 +254,39 @@ $.when(
     });
   }
 
-  function sendFirstSms(Test){
-    sendText("first sms", Test);
-   // updateSms(Test);
+  function sendFirstSms(phoneNumbersListFirstSms,Test){
+    //sendFirstText(phoneNumbersListFirstSms, Test);
+    updateSms(Test);
+    phoneNumbersListFirstSms.push(Test.phoneNumber);
+
+
   }
   
 
-  function sendSecoundSms(timeOfSober, currentTime, Test){
+  function sendSecoundSms(phoneNumbersListSecondSms,timeOfSober, currentTime, Test){
     var timeLeft=timeOfSober-currentTime;
     if(timeLeft-5*60000<0){
-       sendText("secound sms",Test);
-       updateSms(Test)
-      return true;
+      if(Test.sms==1){
+        phoneNumbersListSecondSms.push(Test.sms);
+        updateSms(Test);
+        return true;
+      }
     }
     return false;
   }
 
-  function sendText(text,Test){
-    console.log(text);
-  }
+  // function sendFirstText(phoneNumbersListFirstSms,Test){
+    
+  // }
+
+  // function sendSecondText(phoneNumbersListSecondSms,Test){
+    
+  // }
+
 
       
 });
-
+/*
 $.ajax({
     type: 'post',
     url: "http://127.0.0.1:5000/send_sms", //TODO change for deployed version
@@ -245,7 +301,7 @@ $.ajax({
 }).done(function (data) {
     console.log(data);
 });
-
+*/
 // $.ajax({
 //         type: 'POST',
 //         url: "http://localhost:5000/send_sms",//<todo CHANGE BEFORE DEPLOYING
