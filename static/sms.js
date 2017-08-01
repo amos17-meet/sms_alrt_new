@@ -109,12 +109,12 @@ $.when(
             console.log("i is "+i);
             
             }
-            if(i==Count&&isCountHappend){
-              //send phone numbers list
-              console.log("finished");
-              console.log(phoneNumbersListFirstSms);
-              send(phoneNumbersListFirstSms,"http://127.0.0.1:5000/get_first_phone_number_list");
-              send(phoneNumbersListFirstSms,"http://127.0.0.1:5000/get_second_phone_number_list");
+          if(i==Count&&isCountHappend){
+            //send phone numbers list
+            console.log("finished");
+            console.log(phoneNumbersListFirstSms);
+            send(phoneNumbersListFirstSms,"http://127.0.0.1:5000/get_first_phone_number_list");
+            send(phoneNumbersListFirstSms,"http://127.0.0.1:5000/get_second_phone_number_list");
           }
           
         });
@@ -261,7 +261,7 @@ $.when(
     //sendFirstText(phoneNumbersListFirstSms, Test);
     if(Test.phoneNumber!=""){
       updateSms(Test);
-      phoneNumbersListFirstSms.push(Test.phoneNumber);
+      phoneNumbersListFirstSms.push(Test.phoneNumber+"/"+Test.id);
     }
 
   }
@@ -272,7 +272,7 @@ $.when(
     if(timeLeft-5*60000<0){
       if(Test.sms!=2){
         if(Test.phoneNumber!=""){
-          phoneNumbersListSecondSms.push(Test.sms);
+          phoneNumbersListSecondSms.push(Test.phoneNumber+"/"+Test.id);
           updateSms(Test);
         }
         return true;

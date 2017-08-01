@@ -68,7 +68,7 @@ def get_first_phone_number_list():
 	data_list=str(data_list)
 	print('request:')
 	print(data_list)
-	print(send_messages(data_list,"http://rpoint.co/resolt/id"))
+	print(send_messages(data_list,"http://rpoint.co/results/id",True))
 	return render_template("send_sms_to.html")
 
 @app.route("/get_second_phone_number_list", methods=["GET","POST"])
@@ -79,13 +79,13 @@ def get_second_phone_number_list():
 	data_list=str(data_list)
 	print('request:')
 	print(data_list)
-	print(send_messages(data_list,"alcohol affect will finished in 5 minuets"))
+	print(send_messages(data_list,"alcohol affect will finished in 5 minuets",False))
 	return render_template("send_sms_to.html")
 
 		
 	
 
-def send_messages(string_list_of_phones,text):
+def send_messages(string_list_of_phones,text, is_first):
 	print("send message")
 	print(string_list_of_phones)
 	if string_list_of_phones!="[]":
@@ -95,7 +95,10 @@ def send_messages(string_list_of_phones,text):
 		string_list_of_phones=string_list_of_phones.split(",")
 		for phone_number in string_list_of_phones:
 			phone_number=phone_number[1:-1]
+			phone_number=phone_number.split("/")
 			print(phone_number)
+			if is_first:
+				text=text[:-2]+phone_number[1]
 			send_to_phone_number(phone_number,text)
 		#test_plivo()
 		return True
@@ -121,7 +124,7 @@ def send_to_phone_number(phone_number, text):
 	response = p.send_message(params)
 
 	# Prints the complete response
-	print str(response)
+	print (str(response))
 
 
 
