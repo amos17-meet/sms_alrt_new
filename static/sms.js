@@ -230,18 +230,33 @@ $.when(
 
       
 });
-/*
+
 $.ajax({
-        type: 'POST',
-        url: "http://localhost:5000/send_sms",//<todo CHANGE BEFORE DEPLOYING
-        data: {'in':'out'}, //passing some input here
-        // dataType: "text",
-        success: function(response){
-           output = response;
-           alert(output);
-        }
-}).done(function(data){
+    type: 'post',
+    url: "http://127.0.0.1:5000/send_sms", //TODO change for deployed version
+    data: {'param1':'133333333333333333',
+          'param2': '20000000000000000',
+    },
+    // dataType: 
+    async: false,
+    success: function (response) {
+        console.log(response);
+    }
+}).done(function (data) {
     console.log(data);
-    alert(data);
 });
-*/
+
+// $.ajax({
+//         type: 'POST',
+//         url: "http://localhost:5000/send_sms",//<todo CHANGE BEFORE DEPLOYING
+//         data: {'in':'out'}, //passing some input here
+//         // dataType: "text",
+//         success: function(response){
+//            output = response;
+//            alert(output);
+//         }
+// })
+// .done(function(data){
+//     console.log(data);
+//     alert(data);
+// });

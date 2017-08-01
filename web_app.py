@@ -57,10 +57,14 @@ def send_sms_to_page():
 	return render_template("send_sms_to.html")
 
 #send sms to the phone numbers
-@app.route("/send_sms")
+@app.route("/send_sms", methods=["POST"])
 def send_sms():
-	response_dict = response.get_json()
-	print(response_dict)	
+	req = request.form
+	data_list = str(req['param1'])
+
+	print('request:')
+	print(data_list)	
+	return render_template('send_sms_to.html')
 
 
 if __name__ == '__main__':
