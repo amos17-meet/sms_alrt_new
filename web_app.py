@@ -5,7 +5,8 @@ from werkzeug.utils import secure_filename
 from datetime import datetime
 import pyrebase
 from passlib.hash import pbkdf2_sha256 as crypt
-from twilio.rest import Client
+import plivo
+import re
 
 
 
@@ -59,33 +60,72 @@ def send_sms_to_page():
 	return render_template("send_sms_to.html")
 
 #send sms to the phone numbers
-@app.route("/send_sms", methods=["POST"])
-def send_sms():
+@app.route("/get_first_phone_number_list", methods=["GET","POST"])
+def get_first_phone_number_list():
+	print("here")
 	req = request.form
-	data_list = str(req['phoneNumberList'])
-	send_text(data_list)
+	data_list = req['phoneNumberList']
+	data_list=str(data_list)
+	print('request:')
+	print(data_list)
+	print(send_messages(data_list,"http://rpoint.co/resolt/id"))
+	return render_template("send_sms_to.html")
+
+@app.route("/get_second_phone_number_list", methods=["GET","POST"])
+def get_second_phone_number_list():
+	print("here")
+	req = request.form
+	data_list = req['phoneNumberList']
+	data_list=str(data_list)
+	print('request:')
+	print(data_list)
+	print(send_messages(data_list,"alcohol affect will finished in 5 minuets"))
+	return render_template("send_sms_to.html")
+
 		
 	
 
-def send_text(string_list_of_phones):
-	print('request:')
+def send_messages(string_list_of_phones,text):
+	print("send message")
 	print(string_list_of_phones)
-	list_of_phones=list_of_phones[1:]
-	list_of_phones=list_of_phones[:-1]
-	list_of_phones=list_of_phones.split(",")
+	if string_list_of_phones!="[]":
+		print("in the if condition")
+		string_list_of_phones=string_list_of_phones[1:-1]
+		print(string_list_of_phones)
+		string_list_of_phones=string_list_of_phones.split(",")
+		for phone_number in string_list_of_phones:
+			phone_number=phone_number[1:-1]
+			print(phone_number)
+			send_to_phone_number(phone_number,text)
+		#test_plivo()
+		return True
+	else:
+		return False
 
-def test_twilio():
+def send_to_phone_number(phone_number, text):
 	# put your own credentials here
-	account_sid = "ACd5fdfa3be844be02e00316862ada2cb0"
-	auth_token = "4274acec9b0379ca63fc68b2a151899b"
+	print("here")
+	auth_id = "MAZDM1NJZLNZGYNTIWMT"
+	auth_token = "ZGY4YTA4MzFlMjc1MTRiYmQ2ZmQxNDYyODdkNDAw"
 
-	client = Client(account_sid, auth_token)
-	
-	client.messages.create(
-    to="+972506372990",
-    from_="+972556669100",
-    body="This is the ship that made the Kessel Run in fourteen parsecs?",
-    media_url="https://c1.staticflickr.com/3/2899/14341091933_1e92e62d12_b.jpg")
+	p = plivo.RestAPI(auth_id, auth_token)
+
+	params = {
+	    'src': '+972506372990', # Sender's phone number with country code
+	    'dst' : '+972556669100', # TODO change to the user phone number (parameter)
+	    'text' : text, # Your SMS Text Message - English
+	    'url' : "http://example.com/report/", # The URL to which with the status of the message is sent
+	    'method' : 'POST' # The method used to call the url
+	}
+
+	response = p.send_message(params)
+
+	# Prints the complete response
+	print str(response)
+
+
+
+
 
 
 

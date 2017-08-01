@@ -27,6 +27,7 @@ $.when(
 
 
   var send= function(phoneNumberList,URL){
+    console.log("send function");
     $.ajax({
       type: 'post',
       url: URL, //TODO change for deployed version
@@ -111,7 +112,9 @@ $.when(
             if(i==Count&&isCountHappend){
               //send phone numbers list
               console.log("finished");
-              send(phoneNumbersListFirstSms,"http://127.0.0.1:5000/send_sms")
+              console.log(phoneNumbersListFirstSms);
+              send(phoneNumbersListFirstSms,"http://127.0.0.1:5000/get_first_phone_number_list");
+              send(phoneNumbersListFirstSms,"http://127.0.0.1:5000/get_second_phone_number_list");
           }
           
         });
@@ -256,9 +259,10 @@ $.when(
 
   function sendFirstSms(phoneNumbersListFirstSms,Test){
     //sendFirstText(phoneNumbersListFirstSms, Test);
-    updateSms(Test);
-    phoneNumbersListFirstSms.push(Test.phoneNumber);
-
+    if(Test.phoneNumber!=""){
+      updateSms(Test);
+      phoneNumbersListFirstSms.push(Test.phoneNumber);
+    }
 
   }
   
@@ -266,9 +270,11 @@ $.when(
   function sendSecoundSms(phoneNumbersListSecondSms,timeOfSober, currentTime, Test){
     var timeLeft=timeOfSober-currentTime;
     if(timeLeft-5*60000<0){
-      if(Test.sms==1){
-        phoneNumbersListSecondSms.push(Test.sms);
-        updateSms(Test);
+      if(Test.sms!=2){
+        if(Test.phoneNumber!=""){
+          phoneNumbersListSecondSms.push(Test.sms);
+          updateSms(Test);
+        }
         return true;
       }
     }
