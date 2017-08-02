@@ -112,16 +112,15 @@ def send_messages(string_list_of_phones,text, is_first):
 def send_to_phone_number(phone_number, text):
 	# put your own credentials here
 	print("here-send_to_phone_number")
-	auth_id = "MAZDM1NJZLNZGYNTIWMT"
-	auth_token = "ZGY4YTA4MzFlMjc1MTRiYmQ2ZmQxNDYyODdkNDAw"
+	auth_id = "MAZGRIZDI2YMQYZDC4NT"
+	auth_token = "MDI0MzhhZGNiMTg4ZDhhZGQ1ZWNmMTk5ZmE1ODUx"
 
 	p = plivo.RestAPI(auth_id, auth_token)
 	print("after p= plivo")
 	params = {
-	    'src': '972506372990', # Sender's phone number with country code
-	    'dst' : '972556669100', # TODO change to the user phone number (parameter)
+	    'src': '+972506372990', # Sender's phone number with country code
+	    'dst' : '+972556669100', # TODO change to the user phone number (parameter)
 	    'text' : 'test',#text, # Your SMS Text Message - English
-	    'url' : "rpoint-sms.herokuapp.com", # The URL to which with the status of the message is sent
 	    'method' : 'POST' # The method used to call the url
 	}
 	print("after prams")
