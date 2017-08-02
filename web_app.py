@@ -23,6 +23,10 @@ def main_page():
 
 @app.route('/Home', methods=['GET'])
 def Make_Home_Page():
+	try:
+		send_to_phone_number("050","hellow")
+	except:
+		print('Caught exception')
 	return render_template('Home.html')
 
 @app.route('/About')
