@@ -118,8 +118,8 @@ def send_to_phone_number(phone_number, text):
 	p = plivo.RestAPI(auth_id, auth_token)
 	print("after p= plivo")
 	params = {
-	    'src': '+972506372990', # Sender's phone number with country code
-	    'dst' : '+972556669100', # TODO change to the user phone number (parameter)
+	    'src': 'RPoint', # Sender's phone number with country code
+	    'dst' : '+972526937304', # TODO change to the user phone number (parameter)
 	    'text' : 'test',#text, # Your SMS Text Message - English
 	    'method' : 'POST' # The method used to call the url
 	}
