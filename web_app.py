@@ -61,23 +61,23 @@ def send_sms_to_page():
 #send sms to the phone numbers
 @app.route("/get_first_phone_number_list", methods=["GET","POST"])
 def get_first_phone_number_list():
-	print("here")
+	print("here-get_first_phone_number_list")
 	req = request.form
 	data_list = req['phoneNumberList']
 	data_list=str(data_list)
 	print('request:')
-	print(data_list)
+	print(data_list"first list")
 	print(send_messages(data_list,"http://rpoint.co/results/id",True))
 	return render_template("send_sms_to.html")
 
 @app.route("/get_second_phone_number_list", methods=["GET","POST"])
 def get_second_phone_number_list():
-	print("here")
+	print("here-get_second_phone_number_list")
 	req = request.form
 	data_list = req['phoneNumberList']
 	data_list=str(data_list)
 	print('request:')
-	print(data_list)
+	print(data_list"second list")
 	print(send_messages(data_list,"alcohol affect will finished in 5 minuets",False))
 	return render_template("send_sms_to.html")
 
@@ -106,7 +106,7 @@ def send_messages(string_list_of_phones,text, is_first):
 
 def send_to_phone_number(phone_number, text):
 	# put your own credentials here
-	print("here")
+	print("here-send_to_phone_number")
 	auth_id = "MAZDM1NJZLNZGYNTIWMT"
 	auth_token = "ZGY4YTA4MzFlMjc1MTRiYmQ2ZmQxNDYyODdkNDAw"
 

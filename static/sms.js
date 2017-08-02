@@ -103,7 +103,7 @@ $.when(
               console.log(TestData[key].status);
               if(isActive(endOfAlcoholEffect,now,TestData[key])){
                 console.log(TestData[key].status); 
-                sendSecoundSms(phoneNumbersListSecondSms,endOfAlcoholEffect,now,TestData[key]);
+                sendSecondSms(phoneNumbersListSecondSms,endOfAlcoholEffect,now,TestData[key]);
               }
             }
             i++;
@@ -270,7 +270,7 @@ $.when(
   }
   
 
-  function sendSecoundSms(phoneNumbersListSecondSms,timeOfSober, currentTime, Test){
+  function sendSecondSms(phoneNumbersListSecondSms,timeOfSober, currentTime, Test){
     var timeLeft=timeOfSober-currentTime;
     if(timeLeft-5*60000<0){
       if(Test.sms!=2){
