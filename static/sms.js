@@ -31,8 +31,8 @@ $.when(
     $.ajax({
       type: 'post',
       url: URL, //TODO change for deployed version
-      //data: {'phoneNumberList':JSON.stringify(phoneNumberList)},
-      data: {'phoneNumberList':"hellow- we are here"},
+      data: {'phoneNumberList':JSON.stringify(phoneNumberList)},
+      //data: {'phoneNumberList':"hellow- we are here"},
       // dataType: 
       async: false,
       success: function (response) {
