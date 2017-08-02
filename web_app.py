@@ -13,6 +13,7 @@ UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)
+app.config['DEBUG']=True
 app.secret_key = "RPoint2017"
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -55,7 +56,7 @@ def DonePage(id):
 
 #return 2 dict of phone numbers to send an sms
 @app.route("/send_sms_to")
-def send_sms_to_page():
+def send_sms_to():
 	return render_template("send_sms_to.html")
 
 #send sms to the phone numbers
@@ -68,7 +69,7 @@ def get_first_phone_number_list():
 	print('request:')
 	print(data_list+"first list")
 	print(send_messages(data_list,"http://rpoint.co/results/id",True))
-	return render_template("send_sms_to.html")
+	return redirect(url_for('Make_Home_Page'))
 
 @app.route("/get_second_phone_number_list", methods=["GET","POST"])
 def get_second_phone_number_list():
