@@ -103,7 +103,7 @@ $.when(
               console.log(TestData[key].status);
               if(isActive(endOfAlcoholEffect,now,TestData[key])){
                 console.log(TestData[key].status); 
-                sendSecondSms(phoneNumbersListSecondSms,endOfAlcoholEffect,now,TestData[key]);
+                //sendSecondSms(phoneNumbersListSecondSms,endOfAlcoholEffect,now,TestData[key]);
               }
             }
             i++;
@@ -117,7 +117,7 @@ $.when(
             // send(phoneNumbersListFirstSms,"http://127.0.0.1:5000/get_first_phone_number_list");
             // send(phoneNumbersListFirstSms,"http://127.0.0.1:5000/get_second_phone_number_list");
             send(phoneNumbersListFirstSms,"http://rpoint-sms.herokuapp.com/get_first_phone_number_list");
-            send(phoneNumbersListFirstSms,"http://rpoint-sms.herokuapp.com/get_second_phone_number_list");
+            //send(phoneNumbersListSecondSms,"http://rpoint-sms.herokuapp.com/get_second_phone_number_list");
           }
           
         });
