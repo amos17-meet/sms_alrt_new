@@ -38,6 +38,7 @@ $.when(
           console.log(response);
       }
     }).done(function (data) {
+        console.log('done sending to url ' + URL)
         console.log(data);
     });
 
