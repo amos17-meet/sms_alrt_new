@@ -117,7 +117,7 @@ def send_to_phone_number(phone_number, text):
 	    'src': '+972506372990', # Sender's phone number with country code
 	    'dst' : '+972556669100', # TODO change to the user phone number (parameter)
 	    'text' : 'test',#text, # Your SMS Text Message - English
-	     'url' : "https://api.plivo.com/v1/", # The URL to which with the status of the message is sent
+	    'url' : "https://api.plivo.com/v1/", # The URL to which with the status of the message is sent
 	    'method' : 'POST' # The method used to call the url
 	}
 	print("after prams")
