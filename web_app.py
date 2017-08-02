@@ -66,7 +66,7 @@ def get_first_phone_number_list():
 	data_list = req['phoneNumberList']
 	data_list=str(data_list)
 	print('request:')
-	print(data_list"first list")
+	print(data_list+"first list")
 	print(send_messages(data_list,"http://rpoint.co/results/id",True))
 	return render_template("send_sms_to.html")
 
@@ -77,7 +77,7 @@ def get_second_phone_number_list():
 	data_list = req['phoneNumberList']
 	data_list=str(data_list)
 	print('request:')
-	print(data_list"second list")
+	print(data_list+"second list")
 	print(send_messages(data_list,"alcohol affect will finished in 5 minuets",False))
 	return render_template("send_sms_to.html")
 
