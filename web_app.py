@@ -112,7 +112,7 @@ def send_to_phone_number(phone_number, text):
 	auth_token = "ZGY4YTA4MzFlMjc1MTRiYmQ2ZmQxNDYyODdkNDAw"
 
 	p = plivo.RestAPI(auth_id, auth_token)
-
+	print("after p= plivo")
 	params = {
 	    'src': '+972506372990', # Sender's phone number with country code
 	    'dst' : '+972556669100', # TODO change to the user phone number (parameter)
@@ -120,9 +120,9 @@ def send_to_phone_number(phone_number, text):
 	    #'url' : "http://example.com/report/", # The URL to which with the status of the message is sent
 	    'method' : 'POST' # The method used to call the url
 	}
-
+	print("after prams")
 	response = p.send_message(params)
-
+	print("afret respons=p")
 	# Prints the complete response
 	print (str(response))
 
