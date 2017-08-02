@@ -79,7 +79,7 @@ def get_second_phone_number_list():
 	data_list=str(data_list)
 	print('request:')
 	print(data_list+"second list")
-	print(send_messages(data_list,"alcohol affect will finished in 5 minuets",False))
+	print(send_messages(data_list,"alcohol effects may be reduced within 5 minutes",False))
 	return render_template("send_sms_to.html")
 
 		
@@ -117,7 +117,7 @@ def send_to_phone_number(phone_number, text):
 	    'src': '+972506372990', # Sender's phone number with country code
 	    'dst' : '+972556669100', # TODO change to the user phone number (parameter)
 	    'text' : text, # Your SMS Text Message - English
-	    'url' : "http://example.com/report/", # The URL to which with the status of the message is sent
+	    #'url' : "http://example.com/report/", # The URL to which with the status of the message is sent
 	    'method' : 'POST' # The method used to call the url
 	}
 
