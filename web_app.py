@@ -112,14 +112,14 @@ def send_messages(string_list_of_phones,text, is_first):
 def send_to_phone_number(phone_number, text):
 	# put your own credentials here
 	print("here-send_to_phone_number")
-	auth_id = "MAZGRIZDI2YMQYZDC4NT"
-	auth_token = "MDI0MzhhZGNiMTg4ZDhhZGQ1ZWNmMTk5ZmE1ODUx"
+	auth_id = "MAZDM1NJZLNZGYNTIWMT"
+	auth_token = "ZGY4YTA4MzFlMjc1MTRiYmQ2ZmQxNDYyODdkNDAw"
 
 	p = plivo.RestAPI(auth_id, auth_token)
 	print("after p= plivo")
 	params = {
 	    'src': 'RPoint', # Sender's phone number with country code
-	    'dst' : '+972526937304', # TODO change to the user phone number (parameter)
+	    'dst' : '+972556669100', # TODO change to the user phone number (parameter)
 	    'text' : 'test',#text, # Your SMS Text Message - English
 	    'method' : 'POST' # The method used to call the url
 	}
